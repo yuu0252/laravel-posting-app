@@ -54,4 +54,48 @@ class PostTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee($post->title);
     }
+
+    public function test_guest_cannot_access_posts_create()
+    {
+        $response = $this->get(route('posts.create'));
+
+        $response->assertRedirect(route('login'));
+    }
+
+    public function test_user_can_access_posts_create()
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->get(route('posts.create'));
+
+        $response->assertStatus(200);
+    }
+
+    public function test_guest_cannot_access_posts_store()
+    {
+        $post = [
+            'title' => 'プログラミング学習1日目',
+            'content' => '今日からプログラミング学習開始！頑張るぞ！'
+        ];
+
+        $response = $this->post(route('posts.store'), $post);
+
+        $this->assertDatabaseMissing('posts', $post);
+        $response->assertRedirect(route('login'));
+    }
+
+    public function test_user_can_access_posts_store()
+    {
+        $user = User::factory()->create();
+
+        $post = [
+            'title' => 'プログラミング学習1日目',
+            'content' => '今日からプログラミング学習開始！頑張るぞ！'
+        ];
+
+        $response = $this->actingAs($user)->post(route('posts.store'), $post);
+
+        $this->assertDatabaseHas('posts', $post);
+        $response->assertRedirect(route('posts.index'));
+    }
 }

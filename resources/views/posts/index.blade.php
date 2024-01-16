@@ -1,46 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
+@include('includes.head')
+<h1>投稿一覧</h1>
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-</head>
+@if (session('flash_message'))
+    <p>{{ session('flash_,\message') }}</p>
+@endif
 
-<body>
-    <header>
-        <nav>
-            <a href="{{ route('posts.index') }}">投稿アプリ</a>
+<a href="{{ route('posts.create') }}">新規投稿</a>
 
-            <ul>
-                <li>
-                    <a href="{{ route('logout') }}"
-                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">ログアウト</a>
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST">
-                        @csrf
-                    </form>
-                </li>
-            </ul>
-        </nav>
-    </header>
-    <main>
-        <h1>投稿一覧</h1>
-        @if ($posts->isNotEmpty())
-            @foreach ($posts as $post)
-                <article>
-                    <h2>{{ $post->title }}</h2>
-                    <p>{{ $post->content }}</p>
-                    <a href="{{ route('posts.show', $post) }}">詳細</a>
-                </article>
-            @endforeach
-        @else
-            <p>投稿はありません。</p>
-        @endif
-    </main>
-
-    <footer>
-        <p>&copy; 投稿アプリ All rights reserved</p>
-    </footer>
-</body>
-
-</html>
+@if ($posts->isNotEmpty())
+    @foreach ($posts as $post)
+        <article>
+            <h2>{{ $post->title }}</h2>
+            <p>{{ $post->content }}</p>
+            <a href="{{ route('posts.show', $post) }}">詳細</a>
+        </article>
+    @endforeach
+@else
+    <p>投稿はありません。</p>
+@endif
+@include('includes.foot')
